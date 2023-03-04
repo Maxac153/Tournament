@@ -3,11 +3,14 @@
 
 import sys
 
+from threading import Thread, Event
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
-from ui.main_form import Ui_MainWindow
-from database.database import DataBase
 
+from database.database import DataBase
+from timer.timer import timer
+
+from ui.main_form import Ui_MainWindow
 
 def event_add_player_database():
     """Добавление игрока в базу данных"""
@@ -40,6 +43,19 @@ def loaded_data_database(players):
     for player_name in players:
         ui.listUsersDatabase.addItem(player_name[0])
 
+def thread_timer():
+    """Запуск таймера в отдельном потоке"""
+
+    timer_event = Thread(target=event_timer)
+    timer_event.start()
+
+def event_stop_timer():
+     stop_event_timer.set()
+
+def event_timer():
+    timer(ui.labelTimer, stop_event_timer)
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = QMainWindow()
@@ -50,8 +66,13 @@ if __name__ == '__main__':
     players = data_base.select_all_players()
     loaded_data_database(players)
 
+    stop_event_timer = Event()
+
     ui.btnAddUser.clicked.connect(event_add_player_database)
     ui.btnDelUser.clicked.connect(event_delete_player_database)
+
+    ui.btnStartTur.clicked.connect(thread_timer)
+    ui.btnStopTur.clicked.connect(event_stop_timer)
 
     window.show()
     sys.exit(app.exec())
