@@ -2,6 +2,7 @@ import time
 
 def convert_sec(t):
     return f'{t // 60}:{t % 60}'
+
 def timer(ui_label_timer, event):
     time_end_min = 50
     time_end_sec = time_end_min * 60
