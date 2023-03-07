@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import random
 
 from threading import Thread, Event
 from PyQt5.QtWidgets import QApplication, QMainWindow
@@ -69,6 +70,28 @@ def event_stop_timer():
      stop_event_timer.set()
 
 def event_timer():
+    players = []
+    players_scrole = {}
+
+    for i in range(len(ui.listUsersTournament)):
+        fio = ui.listUsersTournament.item(i).text()
+        players.append(fio)
+        players_scrole[fio] = 0
+
+    if len(players) % 2 != 0:
+        players.append('by')
+
+    print(players)
+    tournament_parings = []
+
+    for _ in range(len(players) // 2):
+        player_one, player_two = random.sample(players, 2)
+        players.remove(player_one)
+        players.remove(player_two)
+        tournament_parings.append((player_one, player_two))
+
+    print(tournament_parings)
+
     timer(ui.labelTimer, stop_event_timer)
 
 def event_search_player():
