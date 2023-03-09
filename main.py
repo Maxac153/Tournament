@@ -92,7 +92,7 @@ def event_timer():
 
     print(tournament_parings)
 
-    timer(ui.labelTimer, stop_event_timer)
+    timer(ui.labelTimer, stop_event_timer) 
 
 def event_search_player():
     """Поиск игрока в листе"""
