@@ -5,14 +5,14 @@ import sys
 import random
 
 from threading import Thread, Event
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
 
 from database.database import DataBase
 from timer.timer import timer
 
 from ui.main_form import Ui_MainWindow
 
-def event_add_player_database():
+def event_add_player_database() -> None:
     """Добавление игрока в базу данных"""
 
     fio = ui.editUser.text()
@@ -21,7 +21,7 @@ def event_add_player_database():
     ui.listUsersDatabase.addItem(fio)
 
 
-def select_list_users_database(ui_list):
+def select_list_users_database(ui_list) -> None:
     """Удаление игрока из списка"""
 
     players = ui_list.selectedItems()
@@ -34,42 +34,42 @@ def select_list_users_database(ui_list):
         return player.text()
 
 
-def event_del_player_database():
+def event_del_player_database() -> None:
     """Удаление игрока из базы данных"""
 
     fio = select_list_users_database(ui.listUsersDatabase)
     DataBase.delete_player(fio)
     players_db.remove(fio)
 
-def loaded_data_database(players):
+def loaded_data_database(players) -> None:
     """Загрузка данных в лист"""
 
     for player_name in players:
         ui.listUsersDatabase.addItem(player_name)
 
 
-def event_add_player_list():
+def event_add_player_list() -> None:
     """Добавление игрока в турнир"""
 
     fio = select_list_users_database(ui.listUsersDatabase)
     ui.listUsersTournament.addItem(fio)
 
-def event_del_player_list():
+def event_del_player_list()-> None:
     """Удаление игрока из турнира"""
 
     fio = select_list_users_database(ui.listUsersTournament)
     ui.listUsersDatabase.addItem(fio)
 
-def thread_timer():
+def thread_timer() -> None:
     """Запуск таймера в отдельном потоке"""
 
     timer_event = Thread(target=event_timer)
     timer_event.start()
 
-def event_stop_timer():
+def event_stop_timer() -> None:
      stop_event_timer.set()
 
-def event_timer():
+def event_timer() -> None:
     players = []
     players_scrole = {}
 
@@ -81,20 +81,25 @@ def event_timer():
     if len(players) % 2 != 0:
         players.append('by')
 
-    print(players)
     tournament_parings = []
 
     for _ in range(len(players) // 2):
         player_one, player_two = random.sample(players, 2)
         players.remove(player_one)
         players.remove(player_two)
-        tournament_parings.append((player_one, player_two))
+        tournament_parings.append((player_one, 0, player_two, 0))
 
-    print(tournament_parings)
+    ui.tableTur.setRowCount(len(tournament_parings))
+    for i in range(len(tournament_parings)):
+        player_one, score_one, player_two, score_two = tournament_parings[i]
+        ui.tableTur.setItem(i, 0, QTableWidgetItem(player_one))
+        ui.tableTur.setItem(i, 1, QTableWidgetItem(str(score_one)))
+        ui.tableTur.setItem(i, 2, QTableWidgetItem(player_two))
+        ui.tableTur.setItem(i, 3, QTableWidgetItem(str(score_two)))
 
     timer(ui.labelTimer, stop_event_timer) 
 
-def event_search_player():
+def event_search_player() -> None:
     """Поиск игрока в листе"""
 
     fio = ui.editSearchUser.text()
